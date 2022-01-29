@@ -7,8 +7,8 @@ data ℕ : Set where
 {-# BUILTIN NATURAL ℕ #-}
 
 import Relation.Binary.PropositionalEquality as Eq
-open Eq using (_≡_; refl)
-open Eq.≡-Reasoning using (begin_; _≡⟨⟩_; _∎)
+open Eq using (_≡_; refl; cong; sym)
+open Eq.≡-Reasoning using (begin_; _≡⟨⟩_; step-≡; _∎)
 
 _+_ : ℕ → ℕ → ℕ
 zero + n = n
@@ -50,13 +50,46 @@ to : ℕ → Bin
 to zero = ⟨⟩ O
 to (suc n) = inc (to n)
 
+from′ : ℕ → Bin → ℕ
+from′ _ ⟨⟩ = 0
+from′ n (m O) = from′ (n + 1) m
+from′ n (m I) = 2 ^ n + from′ (n + 1) m
+
 from : Bin → ℕ
-from m = from′ m 0
-  where
-    from′ : Bin → ℕ → ℕ
-    from′ ⟨⟩ _ = 0
-    from′ (m O) n = from′ m (n + 1)
-    from′ (m I) n = 2 ^ n + from′ m (n + 1)
+from = from′ 0
+
+-- Incrementing something with a zero at the end always gives something with a one
+inc-zero : ∀ (m : Bin) → inc (m O) ≡ m I
+inc-zero ⟨⟩ = refl
+inc-zero (m O) = refl
+inc-zero (m I) = refl
+
+-- inc corresponds to suc over from
+suc-inc : ∀ (b : Bin) → from (inc b) ≡ suc (from b)
+suc-inc ⟨⟩ = suc-inc (⟨⟩ O)
+suc-inc (⟨⟩ O) = refl
+suc-inc (m O) =
+  begin
+    from (inc (m O))
+  ≡⟨ cong from (inc-zero m) ⟩
+    from (m I)
+  ≡⟨⟩
+    {!!}
+suc-inc (m I) = {!!}
+
+-- from and to are isomorphisms between ℕ and Bin
+from-to : ∀ (m : ℕ) → (from (to m)) ≡ m
+from-to 0 = refl
+from-to (suc m) =
+  begin
+    from (to (suc m))
+  ≡⟨⟩
+    from (inc (to m))
+  ≡⟨ suc-inc (to m) ⟩
+    suc (from (to m))
+  ≡⟨ cong suc (from-to m) ⟩
+    suc m
+  ∎
 
 _ : to 0 ≡ ⟨⟩ O
 _ = refl

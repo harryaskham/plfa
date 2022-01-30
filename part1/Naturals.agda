@@ -68,28 +68,13 @@ inc-zero (m I) = refl
 suc-inc : ∀ (b : Bin) → from (inc b) ≡ suc (from b)
 suc-inc ⟨⟩ = suc-inc (⟨⟩ O)
 suc-inc (⟨⟩ O) = refl
-suc-inc (m O) =
-  begin
-    from (inc (m O))
-  ≡⟨ cong from (inc-zero m) ⟩
-    from (m I)
-  ≡⟨⟩
-    {!!}
+suc-inc (m O) rewrite inc-zero m = refl
 suc-inc (m I) = {!!}
 
 -- from and to are isomorphisms between ℕ and Bin
 from-to : ∀ (m : ℕ) → (from (to m)) ≡ m
 from-to 0 = refl
-from-to (suc m) =
-  begin
-    from (to (suc m))
-  ≡⟨⟩
-    from (inc (to m))
-  ≡⟨ suc-inc (to m) ⟩
-    suc (from (to m))
-  ≡⟨ cong suc (from-to m) ⟩
-    suc m
-  ∎
+from-to (suc m) rewrite suc-inc (to m) | from-to m = refl
 
 _ : to 0 ≡ ⟨⟩ O
 _ = refl

@@ -82,7 +82,9 @@ infixr 1 _⊎_
   }
 
 ⊎-assoc : ∀ {A B C : Set} → A ⊎ (B ⊎ C) ≃ (A ⊎ B) ⊎ C
-_≃_.to ⊎-assoc = λ { (inj₁ a) → inj₁ (inj₁ a) ; (inj₂ (inj₁ b)) → inj₁ (inj₂ b) ; (inj₂ (inj₂ c)) → inj₂ c }
-_≃_.from ⊎-assoc = λ { (inj₁ (inj₁ a)) → inj₁ a ; (inj₁ (inj₂ b)) → inj₂ (inj₁ b) ; (inj₂ c) → inj₂ (inj₂ c) }
-_≃_.from∘to ⊎-assoc = λ { (inj₁ a) → refl ; (inj₂ (inj₁ b)) → refl ; (inj₂ (inj₂ c)) → refl }
-_≃_.to∘from ⊎-assoc = λ { (inj₁ (inj₁ a)) → refl ; (inj₁ (inj₂ b)) → refl ; (inj₂ c) → refl }
+⊎-assoc = record
+  { to = λ { (inj₁ a) → inj₁ (inj₁ a) ; (inj₂ (inj₁ b)) → inj₁ (inj₂ b) ; (inj₂ (inj₂ c)) → inj₂ c }
+  ; from = λ { (inj₁ (inj₁ a)) → inj₁ a ; (inj₁ (inj₂ b)) → inj₂ (inj₁ b) ; (inj₂ c) → inj₂ (inj₂ c) }
+  ; from∘to = λ { (inj₁ a) → refl ; (inj₂ (inj₁ b)) → refl ; (inj₂ (inj₂ c)) → refl }
+  ; to∘from = λ { (inj₁ (inj₁ a)) → refl ; (inj₁ (inj₂ b)) → refl ; (inj₂ c) → refl }
+  }
